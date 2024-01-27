@@ -41,7 +41,7 @@ class Server {
         </head>
         <body>
           <div id="root">${markup}</div>
-          <div style="display: none;" id="context">${context.chunk(store)}</div>
+          <div style="display: none;" id="context">${context.chunk(store, slug)}</div>
           <script src="/public/bundle.js"></script>
         </body>
       </html>

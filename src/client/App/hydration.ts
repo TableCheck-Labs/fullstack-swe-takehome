@@ -1,24 +1,19 @@
 import xssFilters from "xss-filters";
 
 export class PreloadedDataHydrator {
-  public id: string;
 
-  constructor(id: string) {
-    this.id = id;
-  }
-
-  chunk(state: unknown): string[] {
+  chunk(state: unknown, id): string[] {
     const json = JSON.stringify(state);
     const htmlSafe = json.replace(/&/gi, "&amp;");
     const filtered = xssFilters.inSingleQuotedAttr(htmlSafe);
     const chunks = filtered.match(/.{1,500000}/g);
     return (chunks as string[]).map(
       (chunk) =>
-        `<input data-preloaded="${this.id}" style='display: none;' value='${chunk}' />`
+        `<input data-preloaded="${id}" style='display: none;' value='${chunk}' />`
     );
   }
 
-  hydrate<TPreloaded>(): TPreloaded {
+  hydrate<TPreloaded>(id): TPreloaded {
     if (typeof window === "undefined" || typeof document === "undefined") {
       throw new Error(
         "hydration should only be performed on the client as it requires the DOM to be loaded"
@@ -28,7 +23,7 @@ export class PreloadedDataHydrator {
     let preloadedState = {} as TPreloaded;
 
     const stateInputs = document.querySelectorAll(
-      `input[data-preloaded="${this.id}"]`
+      `input[data-preloaded="${id}"]`
     );
     const joinedStateString = Array.from(stateInputs)
       .map((el) => (el as HTMLInputElement).value)
@@ -52,4 +47,4 @@ export class PreloadedDataHydrator {
   }
 }
 
-export const context = new PreloadedDataHydrator(Math.random().toString());
+export const context = new PreloadedDataHydrator();

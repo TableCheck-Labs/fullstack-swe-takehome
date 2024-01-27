@@ -3,7 +3,9 @@ import { Store } from "../types";
 import { App } from "./App/App";
 import { context } from "./App/hydration";
 
-const store = context.hydrate<Store>();
+const path = window.location.pathname;
+const shopName = path.split('/')[1];
+const store = context.hydrate<Store>(shopName);
 
 hydrateRoot(
   document.getElementById("root") as HTMLElement,

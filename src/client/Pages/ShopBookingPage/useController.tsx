@@ -1,6 +1,7 @@
 import { useMenu, useShop } from "../../App";
 import { PartySizeList } from "../../Components/PartySizeList";
 import { useMutableState } from "../../utils/useMutableState";
+import getter from "../../utils/getter";
 import { PartySize } from "./PartySize";
 
 type Controller = {
@@ -18,10 +19,11 @@ export function useController(): Controller {
     isCTAOpen: false,
     partySize: new PartySize(shop.config, menu.items),
   });
-
+  
+  const title = getter(shop, "config.slug", "");
   const api: Controller = {
     ...state,
-    title: `welcome to ${shop.config.slug}`,
+    title: `welcome to ${title}`,
     openCTA() {
       setState((d) => {
         d.isCTAOpen = true;
@@ -32,12 +34,12 @@ export function useController(): Controller {
         d.isCTAOpen = false;
       });
     },
-    renderModal() {
+    renderModal: () => {
       return (
-        <dialog open={this.isCTAOpen} data-testid="Party Size Modal">
-          <PartySizeList partySize={this.partySize} />
+        <dialog open={state.isCTAOpen} data-testid="Party Size Modal">
+          <PartySizeList partySize={state.partySize} />
 
-          <button onClick={this.closeCTA}>close</button>
+          <button onClick={api.closeCTA}>close</button>
         </dialog>
       );
     },
