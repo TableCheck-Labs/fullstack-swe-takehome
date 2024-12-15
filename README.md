@@ -29,7 +29,7 @@ Hardcoded to 10 seats.
 
 **Service Time Calculation**
 
-Hardcoded to 3 seconds per person. Example: A party of 4 takes 12 seconds to complete the service.
+Hardcoded to 3 seconds per person. Example: A party of 4 takes 12 seconds to complete their meal.
 
 **Joining the waitlist**
 
