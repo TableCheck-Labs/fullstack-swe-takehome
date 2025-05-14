@@ -65,9 +65,8 @@ When a party completes service:
 
 Please grant access to your repo for these following github users
 
-- `lerio` - Valerio Donati, VPoE at TableCheck
-- `daniellizik` - Daniel Lizik, Engineering Manager at TableCheck
-- `akashgupta-tc` - Akash Gupta, Associate Engineering Manager at TableCheck
+- `daniellizik` - Daniel Lizik, Engineering Manager
+- `LuginaJulia` - Julia Lugina, Senior Software Engineer
 
 ## Evaluation Criteria
 
