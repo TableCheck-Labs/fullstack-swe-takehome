@@ -36,6 +36,8 @@ You must use one of:
 1. Ruby on Rails
 2. Node/Deno/Bun with your choice of backend lib/framework (i.e., express, hono, etc)
 
+Next, Nest are not allowed.
+
 ### Database
 
 You must use one of
