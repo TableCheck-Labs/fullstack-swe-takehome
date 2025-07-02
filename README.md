@@ -45,6 +45,8 @@ You must use one of
 1. Mongo
 2. Postgres
 3. Mysql
+4. Redis
+
 
 ## Business Requirements
 
