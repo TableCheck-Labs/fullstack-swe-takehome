@@ -19,7 +19,10 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "target": "ES2017",
-    "types": ["vite/client"]
+    "types": ["vite/client"],
+    "paths": {
+      "~/*": ["src/*"]
+    }
   },
   "include": ["src/**/*", "types/*", "src/server/routes/server.ts", "node_modules/vite/types/*"],
   "ts-node": {

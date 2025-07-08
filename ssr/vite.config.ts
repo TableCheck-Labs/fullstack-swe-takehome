@@ -16,6 +16,11 @@ export default defineConfig({
   plugins: [react()],
   server: { port: 3000 },
   root: ".",
+  resolve: {
+    alias: {
+      "~": path.resolve(__dirname, "src"),
+    },
+  },
   build: {
     outDir: "dist/client",
     ssrManifest: true,
