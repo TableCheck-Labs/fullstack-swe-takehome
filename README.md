@@ -8,31 +8,6 @@ One of the most challenging and yet most crucial aspects of software development
 
 We're excited to see how you approach these challenges and demonstrate the skills that make a truly exceptional software engineer at TableCheck. Good luck!
 
-## Other Constraints
-
-We're not concerned with your level of typescript skill. Typescript is usually very "trivia"-ish, meaning you know it or you don't. This is ok, it can be learned. So don't get worried about having 100% correct types.
-
-We're also not concerned with styling/css in this exercise. Our design team and devs coordinate closely so that our UI toolkits let us create pixel-perfect pages with minimal effort. So don't worry about styling. In fact you don't even need to write a single line of css for this exercise.
-
-No additional assistance will be provided for the duration of the takehome. You may use any resources you wish (including LLMs), but you must complete the assignment on your own. No additional questions will be answered about the assignment, including how to run the code, how to interpret the requirements, or how to complete the tasks.
-
-This take-home assignment is given to developers of many varying skill levels, depending on your experience, you may not be able to finish all of the tasks in the given time and that's okay! You can still submit the partially complete assignment without being penalized, though we will require you write some documentation outlined in the submission section, testing your asynchronus communication skills and ability to hand over work with minimal friction to other developers.
-
-## Submission
-
-Please _Clone_ (not Fork) this repository into your own personal public repository. Each task should be completed in its own commit. Please do not squash commits. Merge all commits into `main`.
-
-Write down relevant commit/pr title/descriptions in whatever style/detail you think makes sense. There is no need to follow commitlint or anything like that.
-
-If there are any incomplete tasks, please write down in a new `HANDOVER.md` file as many of the following points as possible:
-
-- Your understanding of the task.
-- Your process of working on the task and what you've completed.
-- Problems you faced stopping you from completing the task.
-- What is remaining/missing in order to complete the task.
-
-When submitting the take-home assignment, simply share the URL to your cloned repo (and ensure that it is set to be publicly accessible).
-
 ## Setup
 
 ```bash
