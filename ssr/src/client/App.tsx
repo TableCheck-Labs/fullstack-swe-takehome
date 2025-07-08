@@ -1,10 +1,9 @@
-import Main from "~/client/pages/Main";
 import { ContextWrapper } from "./Context";
 
-export const App = () => {
+export const App = ({ title }: { title: string }) => {
   return (
     <ContextWrapper>
-      <Main />
+      <h1>{title || "page"}</h1>
     </ContextWrapper>
   );
 };

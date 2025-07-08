@@ -4,7 +4,11 @@ import express from "express";
 import fs from "fs/promises";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
+
+import * as routers from "./routers";
+
 import { createServer as createViteServer, ViteDevServer } from "vite";
+import { state } from "~/services/hydation";
 const isTest = process.env.NODE_ENV === "test" || !!process.env.VITE_TEST_BUILD;
 
 const __filename = fileURLToPath(import.meta.url);
@@ -38,7 +42,7 @@ export class Server {
 
   private stylesheets: string = "";
   private baseTemplate: string = "";
-  private render: Awaited<ReturnType<ViteDevServer["ssrLoadModule"]>>["render"];
+  private renderers!: Awaited<ReturnType<ViteDevServer["ssrLoadModule"]>>;
   private vite!: ViteDevServer;
   private app!: express.Application;
 
@@ -69,33 +73,51 @@ export class Server {
 
     this.stylesheets = await Server.getStyleSheets();
     this.baseTemplate = await fs.readFile(clientIndexHtml, "utf-8");
-    const { render } = await this.vite.ssrLoadModule(loadModule);
-    this.render = render;
+    this.renderers = await this.vite.ssrLoadModule(loadModule);
   }
 
-  private async handler(req: Request, res: Response, next: NextFunction) {
+  private setRenderer = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const url = req.originalUrl;
+    res.locals.renderers = this.renderers;
 
     try {
       const template = await this.vite.transformIndexHtml(url, this.baseTemplate);
-      const appHtml = await this.render(url);
-      const cssAssets = await this.stylesheets;
 
-      const html = template.replace(`<!--app-html-->`, appHtml).replace(`<!--head-->`, cssAssets);
+      res.locals.render = async renderer => {
+        const rendered = await renderer(url);
+        const appHtml = `
+          <div id="app" data-canonical-page="${res.locals.canonicalPage}" style="height: 100%; width: 100%">
+            ${rendered}
+          </div>
+        `;
+        const cssAssets = await this.stylesheets;
+        return template
+          .replace(`<!--app-html-->`, appHtml)
+          .replace(`<!--head-->`, cssAssets)
+          .replace(`<!--hydrated state-->`, state.chunk(res.locals.hydratedState));
+      };
 
-      res.status(200).set({ "Content-Type": "text/html" }).end(html);
+      next();
     } catch (e: any) {
       !isProd && this.vite.ssrFixStacktrace(e);
       console.log(e.stack);
       this.vite.ssrFixStacktrace(e);
       next(e);
     }
-  }
+  };
+
+  private respond = (req: Request, res: Response): void => {
+    res.status(200).set({ "Content-Type": "text/html" }).end(res.locals.html);
+  };
 
   public async start() {
     await this.setup();
 
-    this.app.use("*", this.handler.bind(this));
+    this.app.use(this.setRenderer);
+    this.app.use(routers.reserveRouter);
+    this.app.use(routers.waitlistRouter);
+    this.app.use(routers.menuRouter);
+    this.app.use(this.respond);
 
     const port = process.env.PORT || 7456;
 

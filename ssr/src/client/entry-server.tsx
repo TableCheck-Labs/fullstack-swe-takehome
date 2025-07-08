@@ -4,11 +4,31 @@ import { StaticRouter } from "react-router-dom/server";
 import { App } from "./App";
 import "./index.css";
 
-export function render(url: string) {
+export function reservePageRenderer(url: string) {
   return ReactDOMServer.renderToString(
     <React.StrictMode>
       <StaticRouter location={url}>
-        <App />
+        <App title="reserve" />
+      </StaticRouter>
+    </React.StrictMode>,
+  );
+}
+
+export function waitlistPageRenderer(url: string) {
+  return ReactDOMServer.renderToString(
+    <React.StrictMode>
+      <StaticRouter location={url}>
+        <App title="waitlist" />
+      </StaticRouter>
+    </React.StrictMode>,
+  );
+}
+
+export function menuPageRenderer(url: string) {
+  return ReactDOMServer.renderToString(
+    <React.StrictMode>
+      <StaticRouter location={url}>
+        <App title="menu" />
       </StaticRouter>
     </React.StrictMode>,
   );
