@@ -107,12 +107,33 @@ export class Server {
   };
 
   private respond = (req: Request, res: Response): void => {
+    const date = new Date();
+
+    console.log(
+      JSON.stringify({
+        date: date.toISOString(),
+        method: req.method,
+        path: req.url,
+        // locale: req.i18n.language,
+        status: res.statusCode,
+        length: res.get("Content-Length"),
+        // request_id: res.locals.requestId,
+        // ip: req.clientIp,
+        // shop: res.locals.shopSlug,
+        duration: date.getTime() - res.locals.start,
+      }),
+    );
+
     res.status(200).set({ "Content-Type": "text/html" }).end(res.locals.html);
   };
 
   public async start() {
     await this.setup();
 
+    this.app.use((req, res, next) => {
+      res.locals.start = new Date().getTime();
+      next();
+    });
     this.app.use(this.setRenderer);
     this.app.use(routers.reserveRouter);
     this.app.use(routers.waitlistRouter);

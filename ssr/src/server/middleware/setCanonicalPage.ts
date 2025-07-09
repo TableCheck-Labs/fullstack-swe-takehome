@@ -1,4 +1,4 @@
-import { CanonicalPage, Middleware } from "./types";
+import { CanonicalPage, Middleware } from "~/server/types";
 
 export const setCanonicalPage =
   (page: CanonicalPage): Middleware =>
