@@ -36,7 +36,6 @@ export function menuPageRenderer(url: string, state: any) {
 }
 
 export function detailsPageRenderer(url: string, state: any) {
-  console.log(state);
   return ReactDOMServer.renderToString(
     <React.StrictMode>
       <StaticRouter location={url}>
