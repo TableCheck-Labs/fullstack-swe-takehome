@@ -9,8 +9,6 @@ const container = document.getElementById("app");
 
 const hydratedState = state.hydrate<{ title: string }>();
 
-console.log(hydratedState);
-
 const ReservePageApp = () => (
   <React.StrictMode>
     <BrowserRouter>

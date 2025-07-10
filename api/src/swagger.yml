@@ -1,0 +1,323 @@
+openapi: 3.0.0
+info:
+  title: Fake Booking API
+  description: API for a take-home project
+  version: 1.0.0
+
+paths:
+  /booking/shop/{shop}:
+    get:
+      summary: Get shop details
+      parameters:
+        - name: shop
+          in: path
+          required: true
+          description: The unique identifier for the shop
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A list of shops
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShopResponse"
+
+  /booking/user:
+    get:
+      summary: Get user details
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: A list of users
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+
+  /booking/reservation/{id}:
+    get:
+      summary: Get reservation details by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique identifier for the reservation
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A list of reservations
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReservationResponse"
+
+  /booking/waitlist:
+    post:
+      summary: Join the waitlist
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JoinWaitlistInput"
+      responses:
+        "200":
+          description: Waitlist response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JoinWaitlistResponse"
+
+  /booking/waitlist/{id}:
+    get:
+      summary: Get the waitlist status by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique identifier for the waitlist entry
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Waitlist status response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JoinWaitlistResponse"
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ShopResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        location:
+          type: string
+        rating:
+          type: number
+        categories:
+          type: array
+          items:
+            type: string
+        hours:
+          type: string
+        contact:
+          type: string
+        website:
+          type: string
+        description:
+          type: string
+        images:
+          type: array
+          items:
+            type: string
+        services:
+          type: array
+          items:
+            type: string
+        bookingThemes:
+          type: array
+          items:
+            $ref: "#/components/schemas/BookingTheme"
+        reviews:
+          type: array
+          items:
+            type: string
+        owner:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phone:
+          type: string
+        address:
+          type: string
+        preferences:
+          type: array
+          items:
+            type: string
+        loyaltyPoints:
+          type: integer
+        membershipStatus:
+          type: string
+        bookings:
+          type: array
+          items:
+            type: string
+        reviews:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        lastLogin:
+          type: string
+          format: date-time
+
+    ReservationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        shopId:
+          type: string
+        date:
+          type: string
+          format: date
+        time:
+          type: string
+        status:
+          type: string
+        guests:
+          type: integer
+        specialRequests:
+          type: string
+        confirmationNumber:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        cancellationPolicy:
+          type: string
+        paymentStatus:
+          type: string
+        totalCost:
+          type: number
+        discounts:
+          type: array
+          items:
+            type: string
+
+    JoinWaitlistInput:
+      type: object
+      properties:
+        userId:
+          type: string
+        shopId:
+          type: string
+        desiredDate:
+          type: string
+          format: date
+        desiredTime:
+          type: string
+        partySize:
+          type: integer
+        contactPreference:
+          type: string
+        specialRequests:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    JoinWaitlistResponse:
+      type: object
+      properties:
+        waitlistId:
+          type: string
+        userId:
+          type: string
+        shopId:
+          type: string
+        position:
+          type: integer
+        estimatedWaitTime:
+          type: string
+        status:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        notificationSent:
+          type: boolean
+        confirmationNumber:
+          type: string
+        specialRequests:
+          type: string
+        contactPreference:
+          type: string
+        partySize:
+          type: integer
+        desiredDate:
+          type: string
+          format: date
+        desiredTime:
+          type: string
+
+    BookingTheme:
+      type: object
+      properties:
+        themeId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        image:
+          type: string
+        availability:
+          type: string
+        price:
+          type: number
+        duration:
+          type: string
+        shopId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        popularity:
+          type: integer
+        requirements:
+          type: string
+        ageRestriction:
+          type: string
+        cancellationPolicy:
+          type: string
+        reviews:
+          type: array
+          items:
+            type: string

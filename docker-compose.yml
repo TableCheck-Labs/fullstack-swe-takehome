@@ -27,11 +27,3 @@ services:
       - ./redis:/data
     working_dir: /data
     command: redis-server --appendonly yes
-  postgres:
-    image: postgres:latest
-    ports:
-      - 5432:5432
-    volumes:
-      - ./postgres:/var/lib/postgresql/data
-    working_dir: /var/lib/postgresql/data
-    command: postgres -c config_file=/etc/postgresql.conf

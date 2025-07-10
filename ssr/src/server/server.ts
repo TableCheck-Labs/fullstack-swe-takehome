@@ -8,7 +8,9 @@ import { fileURLToPath } from "url";
 import * as routers from "./routers";
 
 import { createServer as createViteServer, ViteDevServer } from "vite";
+import * as M from "~/server/middleware";
 import { state } from "~/services/hydation";
+
 const isTest = process.env.NODE_ENV === "test" || !!process.env.VITE_TEST_BUILD;
 
 const __filename = fileURLToPath(import.meta.url);
@@ -106,27 +108,6 @@ export class Server {
     }
   };
 
-  private respond = (req: Request, res: Response): void => {
-    const date = new Date();
-
-    console.log(
-      JSON.stringify({
-        date: date.toISOString(),
-        method: req.method,
-        path: req.url,
-        // locale: req.i18n.language,
-        status: res.statusCode,
-        length: res.get("Content-Length"),
-        // request_id: res.locals.requestId,
-        // ip: req.clientIp,
-        // shop: res.locals.shopSlug,
-        duration: date.getTime() - res.locals.start,
-      }),
-    );
-
-    res.status(200).set({ "Content-Type": "text/html" }).end(res.locals.html);
-  };
-
   public async start() {
     await this.setup();
 
@@ -138,7 +119,7 @@ export class Server {
     this.app.use(routers.reserveRouter);
     this.app.use(routers.waitlistRouter);
     this.app.use(routers.menuRouter);
-    this.app.use(this.respond);
+    this.app.use(M.respond200);
 
     const port = process.env.PORT || 7456;
 
