@@ -3,16 +3,17 @@ import { createRoot, hydrateRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { state } from "~/services/hydation";
 import { App } from "./App";
+import { Menu, Title } from "./Components";
 import "./index.css";
 
 const container = document.getElementById("app");
 
-const hydratedState = state.hydrate<{ title: string }>();
+const hydratedState = state.hydrate<any>();
 
 const ReservePageApp = () => (
   <React.StrictMode>
     <BrowserRouter>
-      <App {...hydratedState} />
+      <App content={<div>hi</div>} title={<Title>{hydratedState.shop.bookingTitle}</Title>} />
     </BrowserRouter>
   </React.StrictMode>
 );
@@ -20,7 +21,7 @@ const ReservePageApp = () => (
 const WaitlistPageApp = () => (
   <React.StrictMode>
     <BrowserRouter>
-      <App {...hydratedState} />
+      <App content={<div>hi</div>} title={<Title>{hydratedState.shop.waitlistTitle}</Title>} />
     </BrowserRouter>
   </React.StrictMode>
 );
@@ -28,7 +29,15 @@ const WaitlistPageApp = () => (
 const MenuPageApp = () => (
   <React.StrictMode>
     <BrowserRouter>
-      <App {...hydratedState} />
+      <App content={<Menu menu={hydratedState.shop.menu} />} title={<Title>{hydratedState.shop.menuTitle}</Title>} />
+    </BrowserRouter>
+  </React.StrictMode>
+);
+
+const DetailsPageApp = () => (
+  <React.StrictMode>
+    <BrowserRouter>
+      <App content={<div>hi</div>} title={<Title>{hydratedState.shop.detailsTitle}</Title>} />
     </BrowserRouter>
   </React.StrictMode>
 );
@@ -37,6 +46,8 @@ const ClientSideRunTimeApp = () => {
   const canonicalPage = container?.dataset.canonicalPage;
 
   switch (canonicalPage) {
+    case "details":
+      return <DetailsPageApp />;
     case "reserve":
       return <ReservePageApp />;
     case "waitlist":

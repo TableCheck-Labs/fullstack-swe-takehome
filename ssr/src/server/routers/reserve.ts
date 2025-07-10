@@ -5,9 +5,12 @@ export const { router: reserveRouter } = new Router(
   "reserve",
   ["/:locale/:shop/reserve", "/:shop/reserve"],
   [
+    M.init,
+    M.getShop,
+    M.setShopNameViaParams,
     M.setCanonicalPage("reserve"),
-    M.produceHydratedState(draft => {
-      draft.title = "reserve";
+    M.produceHydratedState((draft, _, res) => {
+      draft.shop = res.locals.data.shop;
     }),
     async (req, res, next) => {
       res.locals.html = await res.locals.render(res.locals.renderers.reservePageRenderer);

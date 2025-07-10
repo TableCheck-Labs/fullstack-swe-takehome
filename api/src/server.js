@@ -1,4 +1,3 @@
-import bodyParser from "body-parser";
 import compression from "compression";
 import cors from "cors";
 import express from "express";
@@ -23,6 +22,20 @@ export class Server {
   constructor() {
     this.fixtures = fixtures;
     this.app = express();
+  }
+
+  createContentTypeMiddleware() {
+    return (req, res, next) => {
+      if (
+        req.method.toUpperCase() === "POST" &&
+        req.headers &&
+        req.headers["content-type"] &&
+        req.headers["content-type"].indexOf("application/json") > -1
+      ) {
+        req.headers["content-type"] = "application/json";
+      }
+      next();
+    };
   }
 
   createMockMiddleware() {
@@ -60,22 +73,6 @@ export class Server {
           const isQueryMatch = Server.isEqual(query, req.query);
           const isBodyMatch = Server.isEqual(body, req.body);
 
-          console.log({
-            match,
-            route: req.originalUrl,
-            params: req.params,
-            parsedParams: (matched || {}).params,
-            query: req.query,
-            body: req.body,
-            pathname: new URL(`http://localhost:9001${req.originalUrl}`)
-              .pathname,
-            isMethodMatch,
-            isRouteMatch,
-            isParamsMatch,
-            isQueryMatch,
-            isBodyMatch,
-          });
-
           return (
             isMethodMatch &&
             isRouteMatch &&
@@ -96,14 +93,49 @@ export class Server {
   start() {
     this.app
       .use(compression({ threshold: 0 }))
-      .use(bodyParser.json({ extended: true, limit: "10mb" }))
       .use(
         cors({
           origin: "*",
           credentials: true,
         })
       )
+      .use(express.json({ limit: "10mb" }))
+      .use(this.createContentTypeMiddleware())
       .use(this.createInterceptMiddleware())
+      .post("/booking/menu", (req, res) => {
+        const success = _.sample([true, false]);
+        if (success) {
+          res.status(200).json({
+            message: "success",
+            reservationId: Math.random().toString(32).slice(-6).toUpperCase(),
+          });
+        } else {
+          res.status(400).json({
+            message: _.sample([
+              "Reservation failed",
+              "System error",
+              "Invalid quantity",
+            ]),
+          });
+        }
+      })
+      .get("/booking/reservation/:code", (req, res, next) => {
+        res.status(200).json({
+          shopId: "test",
+          date: "2023-01-09",
+          time: "12:00 PM",
+          status: "Confirmed",
+          guests: 2,
+          specialRequests: "Window seat",
+          confirmationNumber: "123456",
+          createdAt: "2022-12-31T15:00:00.0Z",
+          updatedAt: "2023-01-01T15:00:00.0Z",
+          cancellationPolicy: "24-hour notice required",
+          paymentStatus: "Paid",
+          totalCost: 49.99,
+          discounts: ["10% off"],
+        });
+      })
       .use(this.createMockMiddleware())
       .listen(9001, () => {
         console.log("Server is running on port 9001");

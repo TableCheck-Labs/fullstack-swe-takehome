@@ -8,12 +8,9 @@ export const respond200: Middleware = (req, res, next) => {
       date: date.toISOString(),
       method: req.method,
       path: req.url,
-      // locale: req.i18n.language,
       status: res.statusCode,
       length: res.get("Content-Length"),
-      // request_id: res.locals.requestId,
-      // ip: req.clientIp,
-      // shop: res.locals.shopSlug,
+      shop: res.locals.shopName,
       duration: date.getTime() - res.locals.start,
     }),
   );

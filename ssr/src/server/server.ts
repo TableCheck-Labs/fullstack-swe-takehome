@@ -86,7 +86,7 @@ export class Server {
       const template = await this.vite.transformIndexHtml(url, this.baseTemplate);
 
       res.locals.render = async renderer => {
-        const rendered = await renderer(url);
+        const rendered = await renderer(url, res.locals.hydratedState);
         const appHtml = `
           <div id="app" data-canonical-page="${res.locals.canonicalPage}" style="height: 100%; width: 100%">
             ${rendered}
@@ -115,11 +115,14 @@ export class Server {
       res.locals.start = new Date().getTime();
       next();
     });
-    this.app.use(this.setRenderer);
-    this.app.use(routers.reserveRouter);
-    this.app.use(routers.waitlistRouter);
-    this.app.use(routers.menuRouter);
-    this.app.use(M.respond200);
+    this.app
+      .use(this.setRenderer)
+      .use(routers.reserveRouter)
+      .use(routers.waitlistRouter)
+      .use(routers.menuRouter)
+      .use(routers.detailsRouter)
+      .use(M.respond200)
+      .use(M.error);
 
     const port = process.env.PORT || 7456;
 

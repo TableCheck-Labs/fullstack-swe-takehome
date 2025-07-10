@@ -15,6 +15,7 @@ paths:
           description: The unique identifier for the shop
           schema:
             type: string
+            example: "shop123"
       responses:
         "200":
           description: A list of shops
@@ -36,16 +37,39 @@ paths:
               schema:
                 $ref: "#/components/schemas/UserResponse"
 
-  /booking/reservation/{id}:
+  /booking/menu:
+    post:
+      summary: Reserve a menu item
+      description: Reserve a specific menu item with quantity.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MenuReservationRequest"
+      responses:
+        "200":
+          description: Reservation confirmed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MenuReservationResponse"
+        "400":
+          description: Invalid input
+        "500":
+          description: Server error
+
+  /booking/reservation/{code}:
     get:
       summary: Get reservation details by ID
       parameters:
-        - name: id
+        - name: code
           in: path
           required: true
           description: The unique identifier for the reservation
           schema:
             type: string
+            example: "res456"
       responses:
         "200":
           description: A list of reservations
@@ -80,6 +104,7 @@ paths:
           description: The unique identifier for the waitlist entry
           schema:
             type: string
+            example: "wait789"
       responses:
         "200":
           description: Waitlist status response
@@ -95,229 +120,366 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
+    MenuReservationRequest:
+      type: object
+      required:
+        - id
+        - quantity
+      properties:
+        id:
+          type: string
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        quantity:
+          type: integer
+          minimum: 1
+          example: 2
+        notes:
+          type: string
+          description: Optional notes from user
+          example: "No onions, please"
+
+    MenuReservationResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Reservation received"
+        reservationId:
+          type: string
+          example: "H8OIE0"
+
+    MenuItem:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "menu001"
+        image:
+          type: string
+          example: "https://thecoffeehouse.com/image1.jpg"
+        name:
+          type: string
+          example: "Cheeseburger"
+        description:
+          type: string
+          example: "A delicious cheeseburger with all the fixings."
+        minQty:
+          type: integer
+          example: 1
+        maxQty:
+          type: integer
+          example: 5
+        price:
+          type: string
+          example: "9.99"
+        currency:
+          type: string
+          example: "USD"
     ShopResponse:
       type: object
       properties:
         id:
           type: string
+          example: "shop123"
         name:
           type: string
+          example: "The Coffee House"
+        bookingMinPax:
+          type: integer
+          example: 1
+        bookingMaxPax:
+          type: integer
+          example: 10
+        bookingTitle:
+          type: string
+          example: "Reserve at The Coffee House"
+        detailsTitle:
+          type: string
+          example: "Your reservation details at The Coffee House"
+        waitlistTitle:
+          type: string
+          example: "Join the waitlist at The Coffee House"
+        menuTitle:
+          type: string
+          example: "Menu at The Coffee House"
         location:
           type: string
+          example: "123 Main St, Anytown, USA"
         rating:
           type: number
+          example: 4.5
         categories:
           type: array
           items:
             type: string
+          example: ["Cafe", "Bakery"]
         hours:
           type: string
+          example: "8 AM - 8 PM"
         contact:
           type: string
+          example: "(555) 123-4567"
         website:
           type: string
+          example: "https://thecoffeehouse.com"
         description:
           type: string
+          example: "A cozy place to enjoy coffee and pastries."
         images:
           type: array
           items:
             type: string
+          example:
+            [
+              "https://thecoffeehouse.com/image1.jpg",
+              "https://thecoffeehouse.com/image2.jpg",
+            ]
+        menu:
+          type: array
+          items:
+            $ref: "#/components/schemas/MenuItem"
+          example: [{ id: "menu001", name: "Cheeseburger", price: "9.99" }]
         services:
           type: array
           items:
             type: string
-        bookingThemes:
-          type: array
-          items:
-            $ref: "#/components/schemas/BookingTheme"
+          example: ["WiFi", "Outdoor Seating"]
+        bookingTheme:
+          type: object
+          $ref: "#/components/schemas/BookingTheme"
         reviews:
           type: array
           items:
             type: string
+          example: ["Great coffee!", "Loved the ambiance."]
         owner:
           type: string
+          example: "John Doe"
         createdAt:
           type: string
           format: date-time
+          example: "2023-01-01T10:00:00Z"
         updatedAt:
           type: string
           format: date-time
+          example: "2023-01-02T10:00:00Z"
 
     UserResponse:
       type: object
       properties:
         id:
           type: string
+          example: "user123"
         username:
           type: string
+          example: "johndoe"
         email:
           type: string
+          example: "johndoe@example.com"
         firstName:
           type: string
+          example: "John"
         lastName:
           type: string
+          example: "Doe"
         phone:
           type: string
+          example: "(555) 987-6543"
         address:
           type: string
+          example: "456 Elm St, Anytown, USA"
         preferences:
           type: array
           items:
             type: string
+          example: ["Vegan", "Gluten-Free"]
         loyaltyPoints:
           type: integer
+          example: 1500
         membershipStatus:
           type: string
+          example: "Gold"
         bookings:
           type: array
           items:
             type: string
+          example: ["res123", "res456"]
         reviews:
           type: array
           items:
             type: string
+          example: ["Great service!", "Will visit again."]
         createdAt:
           type: string
           format: date-time
+          example: "2023-01-01T10:00:00Z"
         updatedAt:
           type: string
           format: date-time
+          example: "2023-01-02T10:00:00Z"
         lastLogin:
           type: string
           format: date-time
+          example: "2023-01-03T10:00:00Z"
 
     ReservationResponse:
       type: object
       properties:
         id:
           type: string
-        userId:
-          type: string
+          example: "res123"
         shopId:
           type: string
+          example: "shop123"
         date:
           type: string
           format: date
+          example: "2023-01-10"
         time:
           type: string
+          example: "12:00 PM"
         status:
           type: string
+          example: "Confirmed"
         guests:
           type: integer
+          example: 2
         specialRequests:
           type: string
-        confirmationNumber:
+          example: "Window seat"
+        code:
           type: string
+          example: "CONF123456"
         createdAt:
           type: string
           format: date-time
+          example: "2023-01-01T10:00:00Z"
         updatedAt:
           type: string
           format: date-time
+          example: "2023-01-02T10:00:00Z"
         cancellationPolicy:
           type: string
+          example: "24-hour notice required"
         paymentStatus:
           type: string
+          example: "Paid"
         totalCost:
           type: number
+          example: 49.99
         discounts:
           type: array
           items:
             type: string
+          example: ["10% off"]
 
     JoinWaitlistInput:
       type: object
       properties:
         userId:
           type: string
+          example: "user123"
         shopId:
           type: string
+          example: "shop123"
         desiredDate:
           type: string
           format: date
+          example: "2023-01-15"
         desiredTime:
           type: string
+          example: "6:00 PM"
         partySize:
           type: integer
+          example: 4
         contactPreference:
           type: string
+          example: "Email"
         specialRequests:
           type: string
+          example: "High chair needed"
         createdAt:
           type: string
           format: date-time
+          example: "2023-01-01T10:00:00Z"
 
     JoinWaitlistResponse:
       type: object
       properties:
         waitlistId:
           type: string
+          example: "wait123"
         userId:
           type: string
+          example: "user123"
         shopId:
           type: string
+          example: "shop123"
         position:
           type: integer
+          example: 5
         estimatedWaitTime:
           type: string
+          example: "30 minutes"
         status:
           type: string
+          example: "Waiting"
         createdAt:
           type: string
           format: date-time
+          example: "2023-01-01T10:00:00Z"
         updatedAt:
           type: string
           format: date-time
+          example: "2023-01-02T10:00:00Z"
         notificationSent:
           type: boolean
-        confirmationNumber:
+          example: true
+        code:
           type: string
+          example: "CONF789012"
         specialRequests:
           type: string
+          example: "Near entrance"
         contactPreference:
           type: string
+          example: "SMS"
         partySize:
           type: integer
+          example: 4
         desiredDate:
           type: string
           format: date
+          example: "2023-01-15"
         desiredTime:
           type: string
+          example: "6:00 PM"
 
     BookingTheme:
       type: object
       properties:
-        themeId:
+        colorPrimary:
           type: string
-        name:
+          format: color
+          example: "#FF5733"
+        colorSecondary:
           type: string
-        description:
+          format: color
+          example: "#C70039"
+        backgroundColor:
           type: string
-        image:
+          format: color
+          example: "#FFFFFF"
+        textColor:
           type: string
-        availability:
+          format: color
+          example: "#333333"
+        borderRadius:
           type: string
-        price:
-          type: number
-        duration:
+          example: "8px"
+        fontSize:
           type: string
-        shopId:
+          example: "1rem"
+        spacing:
           type: string
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-        popularity:
-          type: integer
-        requirements:
-          type: string
-        ageRestriction:
-          type: string
-        cancellationPolicy:
-          type: string
-        reviews:
-          type: array
-          items:
-            type: string
+          example: "1.5rem"

@@ -1,11 +1,15 @@
-import { ContextWrapper } from "./Context";
+import { Page } from "./Components";
 
-export const App = ({ title }: { title: string }) => {
+interface Props {
+  title: React.ReactNode;
+  content: React.ReactNode;
+}
+
+export function App({ title, content }: Props) {
   return (
-    <ContextWrapper>
-      <h1>{title || "page"}</h1>
-    </ContextWrapper>
+    <Page>
+      {title}
+      {content}
+    </Page>
   );
-};
-
-export default App;
+}
