@@ -1,13 +1,11 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 
-const baseURL = process.env.NODE_ENV === "production" ? "http://api:9001" : "http://localhost:9001";
-
 export const browserInstance = axios.create({
-  baseURL,
+  baseURL: "http://localhost:9001",
 });
 
 export const serverInstance = axios.create({
-  baseURL,
+  baseURL: process.env.NODE_ENV === "production" ? "http://api:9001" : "http://localhost:9001",
 });
 
 function logInterceptor(req: InternalAxiosRequestConfig) {

@@ -95,7 +95,9 @@ export class Server {
       .use(compression({ threshold: 0 }))
       .use(
         cors({
-          origin: "*",
+          origin: "*", // or restrict to 'http://localhost:8080' if needed
+          methods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
+          allowedHeaders: ["Content-Type", "Authorization"],
           credentials: true,
         })
       )
