@@ -5,7 +5,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start:dev": "npx tsx watch src/index.js --clear-screen=false"
+    "start": "npx tsx watch src/index.js --clear-screen=false"
   },
   "keywords": [],
   "author": "",

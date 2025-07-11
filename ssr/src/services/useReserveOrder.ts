@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { browserClient } from "~/services/api/client";
+import { browserClient } from "~/services/api";
 import { AsyncReducerState, useAsyncReducer } from "~/utils/useAsyncReducer";
 
 export interface MenuItem {

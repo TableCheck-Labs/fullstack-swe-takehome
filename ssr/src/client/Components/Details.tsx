@@ -82,29 +82,6 @@ export function Details({ reservation, user }: Props) {
           )}
         </div>
       </div>
-
-      {/* Metadata */}
-      <div className="bg-white shadow-md rounded-xl p-6">
-        <h2 className="text-xl font-semibold mb-4">Metadata</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <span className="text-gray-500">Confirmation Code:</span>
-            <div className="font-medium">{reservation.code}</div>
-          </div>
-          <div>
-            <span className="text-gray-500">Cancellation Policy:</span>
-            <div className="font-medium">{reservation.cancellationPolicy}</div>
-          </div>
-          <div>
-            <span className="text-gray-500">Created At:</span>
-            <div className="font-medium">{reservation.createdAt}</div>
-          </div>
-          <div>
-            <span className="text-gray-500">Last Updated:</span>
-            <div className="font-medium">{reservation.updatedAt}</div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

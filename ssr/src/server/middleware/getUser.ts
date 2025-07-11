@@ -1,5 +1,5 @@
 import { Middleware } from "~/server/types";
-import { serverClient } from "~/services/api/client";
+import { serverClient } from "~/services/api";
 
 export const getUser: Middleware = async (req, res, next) => {
   const { auth_token } = req.cookies;

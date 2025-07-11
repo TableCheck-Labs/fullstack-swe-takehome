@@ -1,29 +1,38 @@
+version: "3.9"
+
 services:
   ssr:
     build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - 3000:3000
-    volumes:
-      - ./ssr:/app
-    working_dir: /app
-    command: npm run dev
+      context: ./ssr
+    expose:
+      - "7456"
+    depends_on:
+      - api
+      - redis
+    environment:
+      - NODE_ENV=production
+
   api:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: node:19-alpine
     ports:
-      - 3001:3001
+      - 9001:9001
     volumes:
       - ./api:/app
     working_dir: /app
-    command: npm run dev
+    command: npm run start
+
   redis:
-    image: redis:latest
+    image: redis:7
     ports:
-      - 6379:6379
+      - "6379:6379"
+
+  varnish:
+    image: varnish:stable
+    ports:
+      - "8080:80"
     volumes:
-      - ./redis:/data
-    working_dir: /data
-    command: redis-server --appendonly yes
+      - ./default.vcl:/etc/varnish/default.vcl
+    depends_on:
+      - ssr
+    environment:
+      - VARNISH_SIZE=100M

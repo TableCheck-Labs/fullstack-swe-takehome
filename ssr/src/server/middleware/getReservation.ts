@@ -1,5 +1,5 @@
 import { Middleware } from "~/server/types";
-import { serverClient } from "~/services/api/client";
+import { serverClient } from "~/services/api";
 
 export const getReservation: Middleware = async (req, res, next) => {
   const { reservation, shop } = await serverClient.getReservation(req.params.code);
