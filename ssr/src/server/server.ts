@@ -51,21 +51,14 @@ export class Server {
 
   private async setup() {
     this.app = express();
-    this.vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: "custom",
-      logLevel: isTest ? "error" : "info",
-      root: isProd ? "dist" : "",
-      optimizeDeps: { include: [] },
-    });
 
-    this.app.use(this.vite.middlewares);
-    const requestHandler = express.static(publicDir);
-    this.app.use(requestHandler);
-    this.app.use("/public", requestHandler);
     this.app.use(cookieParser());
 
     if (isProd) {
+      this.stylesheets = await Server.getStyleSheets();
+      this.baseTemplate = await fs.readFile(clientIndexHtml, "utf-8");
+      this.renderers = await import(loadModule); // Don't use vite.ssrLoadModule in prod
+
       this.app.use(compression());
 
       this.app.use(
@@ -73,11 +66,23 @@ export class Server {
           index: false,
         }),
       );
+    } else {
+      this.vite = await createViteServer({
+        server: { middlewareMode: true },
+        appType: "custom",
+        logLevel: isTest ? "error" : "info",
+      });
+
+      this.app.use(this.vite.middlewares);
+
+      this.stylesheets = await Server.getStyleSheets();
+      this.baseTemplate = await fs.readFile(clientIndexHtml, "utf-8");
+      this.renderers = await this.vite.ssrLoadModule(loadModule);
     }
 
-    this.stylesheets = await Server.getStyleSheets();
-    this.baseTemplate = await fs.readFile(clientIndexHtml, "utf-8");
-    this.renderers = await this.vite.ssrLoadModule(loadModule);
+    const requestHandler = express.static(publicDir);
+    this.app.use(requestHandler);
+    this.app.use("/public", requestHandler);
   }
 
   private setRenderer = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -85,12 +90,12 @@ export class Server {
     res.locals.renderers = this.renderers;
 
     try {
-      const template = await this.vite.transformIndexHtml(url, this.baseTemplate);
+      const template = isProd ? this.baseTemplate : await this.vite.transformIndexHtml(url, this.baseTemplate);
 
       res.locals.render = async renderer => {
         const rendered = await renderer(url, res.locals.hydratedState);
         const appHtml = `
-          <div id="app" data-canonical-page="${res.locals.canonicalPage}" style="height: 100%; width: 100%">
+          <div data-env=${process.env.NODE_ENV} id="app" data-canonical-page="${res.locals.canonicalPage}" style="height: 100%; width: 100%">
             ${rendered}
           </div>
         `;

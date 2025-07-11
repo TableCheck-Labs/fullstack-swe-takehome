@@ -6,7 +6,6 @@
   "license": "MIT",
   "scripts": {
     "dev:ssr": "tsx src/server/index.ts",
-    "dev:spa": "npm run build:client && vite --config vite.config.ts dev",
     "build": "rimraf dist && tsc -p tsconfig.json && npm run build:client && npm run build:ssr-entry && npm run build:server",
     "build:client": "vite build",
     "build:ssr-entry": "vite build --ssr src/client/entry-server.tsx --outDir dist/entry",
