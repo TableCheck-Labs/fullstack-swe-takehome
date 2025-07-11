@@ -1,48 +1,12 @@
-import { useCallback, useState } from "react";
-import { client } from "~/services/api/client";
-import { useAsyncReducer } from "~/utils/useAsyncReducer";
+import { MenuItem, useReserveOrder } from "~/services/useReserveOrder";
 import { ReserveMenuItem } from "./ReserveMenuItem";
-
-interface MenuItem {
-  id: string;
-  image: string;
-  name: string;
-  description: string;
-  price: string;
-  currency: string;
-  minQty: number;
-  maxQty: number;
-}
 
 interface Props {
   menu: MenuItem[];
 }
 
 export function Menu({ menu }: Props) {
-  const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
-  const [state, api] = useAsyncReducer<{
-    reservationId: string;
-    success: boolean;
-  } | null>();
-
-  const handleSubmit = useCallback(
-    async (quantity: number) => {
-      if (!selectedItem) return;
-
-      api.start();
-      try {
-        const response = await client.reserveMenuItem({
-          id: selectedItem.id,
-          quantity,
-        });
-        api.done(response);
-        window.location.assign(`/en/booking/${response.reservationId}`);
-      } catch (error: any) {
-        api.error(error);
-      }
-    },
-    [selectedItem, api],
-  );
+  const [state, api] = useReserveOrder();
 
   return (
     <>
@@ -52,12 +16,12 @@ export function Menu({ menu }: Props) {
           <span className="block sm:inline">{state.error.message}</span>
         </div>
       )}
-      {!selectedItem ? null : (
+      {!state.selectedItem ? null : (
         <ReserveMenuItem
           isLoading={state.isLoading}
-          onSubmit={handleSubmit}
-          menuItem={selectedItem}
-          onClose={() => setSelectedItem(null)}
+          onSubmit={api.handleSubmit}
+          menuItem={state.selectedItem}
+          onClose={() => api.setSelectedItem(null)}
         />
       )}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-4">
@@ -66,7 +30,7 @@ export function Menu({ menu }: Props) {
             key={item.id}
             className="relative border rounded-xl shadow-sm p-6 bg-white hover:shadow-md transition-shadow"
             onClick={() => {
-              setSelectedItem(item);
+              api.setSelectedItem(item);
             }}
           >
             <img

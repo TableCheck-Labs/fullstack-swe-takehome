@@ -1,6 +1,7 @@
 export { error } from "./error";
 export { getReservation } from "./getReservation";
 export { getShop } from "./getShop";
+export { getUser } from "./getUser";
 export { init } from "./init";
 export { produceHydratedState } from "./produceHydratedState";
 export { respond200 } from "./respond200";

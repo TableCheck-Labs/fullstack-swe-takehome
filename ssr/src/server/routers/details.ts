@@ -6,12 +6,14 @@ export const { router: detailsRouter } = new Router(
   ["/:locale/booking/:code", "/booking/:code"],
   [
     M.init,
+    M.getUser,
     M.setCanonicalPage("details"),
     M.getReservation,
     M.setShopNameViaReservation,
     M.produceHydratedState((draft, _, res) => {
       draft.shop = res.locals.data.shop;
       draft.reservation = res.locals.data.reservation;
+      draft.user = res.locals.data.user;
     }),
     async (req, res, next) => {
       res.locals.html = await res.locals.render(res.locals.renderers.detailsPageRenderer);

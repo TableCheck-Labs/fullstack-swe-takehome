@@ -3,7 +3,7 @@ import { createRoot, hydrateRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { state } from "~/services/hydation";
 import { App } from "./App";
-import { Menu, Title } from "./Components";
+import { Details, Menu, Title } from "./Components";
 import "./index.css";
 
 const container = document.getElementById("app");
@@ -13,7 +13,7 @@ const hydratedState = state.hydrate<any>();
 const ReservePageApp = () => (
   <React.StrictMode>
     <BrowserRouter>
-      <App content={<div>hi</div>} title={<Title>{hydratedState.shop.bookingTitle}</Title>} />
+      <App user={hydratedState.user} content={<div>hi</div>} title={<Title>{hydratedState.shop.bookingTitle}</Title>} />
     </BrowserRouter>
   </React.StrictMode>
 );
@@ -21,7 +21,11 @@ const ReservePageApp = () => (
 const WaitlistPageApp = () => (
   <React.StrictMode>
     <BrowserRouter>
-      <App content={<div>hi</div>} title={<Title>{hydratedState.shop.waitlistTitle}</Title>} />
+      <App
+        user={hydratedState.user}
+        content={<div>hi</div>}
+        title={<Title>{hydratedState.shop.waitlistTitle}</Title>}
+      />
     </BrowserRouter>
   </React.StrictMode>
 );
@@ -29,7 +33,11 @@ const WaitlistPageApp = () => (
 const MenuPageApp = () => (
   <React.StrictMode>
     <BrowserRouter>
-      <App content={<Menu menu={hydratedState.shop.menu} />} title={<Title>{hydratedState.shop.menuTitle}</Title>} />
+      <App
+        user={hydratedState.user}
+        content={<Menu menu={hydratedState.shop.menu} />}
+        title={<Title>{hydratedState.shop.menuTitle}</Title>}
+      />
     </BrowserRouter>
   </React.StrictMode>
 );
@@ -37,7 +45,11 @@ const MenuPageApp = () => (
 const DetailsPageApp = () => (
   <React.StrictMode>
     <BrowserRouter>
-      <App content={<div>hi</div>} title={<Title>{hydratedState.shop.detailsTitle}</Title>} />
+      <App
+        user={hydratedState.user}
+        content={<Details reservation={hydratedState.reservation} user={hydratedState.user} />}
+        title={<Title>{hydratedState.shop.detailsTitle}</Title>}
+      />
     </BrowserRouter>
   </React.StrictMode>
 );

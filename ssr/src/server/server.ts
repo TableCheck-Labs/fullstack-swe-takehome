@@ -1,4 +1,5 @@
 import compression from "compression";
+import cookieParser from "cookie-parser";
 import type { NextFunction, Request, Response } from "express";
 import express from "express";
 import fs from "fs/promises";
@@ -62,6 +63,7 @@ export class Server {
     const requestHandler = express.static(publicDir);
     this.app.use(requestHandler);
     this.app.use("/public", requestHandler);
+    this.app.use(cookieParser());
 
     if (isProd) {
       this.app.use(compression());

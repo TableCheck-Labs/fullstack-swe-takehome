@@ -1,5 +1,6 @@
 export { Alert } from "./Alert";
 export { Auth } from "./Auth";
+export { Details } from "./Details";
 export { JoinWaitlist } from "./JoinWaitlist";
 export { Menu } from "./Menu";
 export { NavBar } from "./NavBar";

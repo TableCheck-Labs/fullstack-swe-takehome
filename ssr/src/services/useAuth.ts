@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from "react";
 import { AsyncReducerState, useAsyncReducer } from "~/utils/useAsyncReducer";
-import { client } from "./api";
+import { browserClient } from "./api/client";
 import { cookies } from "./cookies";
 
-interface User {
+export interface User {
   id: string;
   email: string;
   phone: string;
@@ -30,8 +30,16 @@ export type UseAuth = [
   },
 ];
 
-export function useAuth(): UseAuth {
-  const [state, api] = useAsyncReducer<User>();
+export function useAuth(user: User | null): UseAuth {
+  const [state, api] = useAsyncReducer<User>(
+    !user
+      ? undefined
+      : {
+          state: "done",
+          data: user,
+          error: null,
+        },
+  );
 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
@@ -55,9 +63,9 @@ export function useAuth(): UseAuth {
       const email = formData.get("email") as string;
       const password = formData.get("password") as string;
       try {
-        const token = await client.login(email, password);
+        const token = await browserClient.login(email, password);
         cookies.setAuthToken(token);
-        const user = await client.getUser(token.accessToken);
+        const user = await browserClient.getUser(token.accessToken);
         closeLoginModal();
         api.done(user);
       } catch (error) {
@@ -73,7 +81,8 @@ export function useAuth(): UseAuth {
     try {
       const token = cookies.getAuthToken();
       if (!token) return api.error(new Error("could not logout"));
-      await client.logout(token.accessToken);
+      await browserClient.logout(token.accessToken);
+      cookies.removeAuthToken();
       api.reset();
     } catch (error) {
       console.error(error);
