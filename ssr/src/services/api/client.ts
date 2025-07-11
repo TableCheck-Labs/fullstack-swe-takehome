@@ -22,6 +22,31 @@ class Client {
       shop: shopData,
     };
   }
+
+  public async login(username: string, password: string) {
+    const { data } = await instance.post("/user/token", {
+      username,
+      password,
+    });
+    return data;
+  }
+
+  public async logout(token: string) {
+    await instance.delete("/user/token/revoke", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  }
+
+  public async getUser(token: string) {
+    const { data } = await instance.get("/booking/user", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return data;
+  }
 }
 
 export const client = new Client();

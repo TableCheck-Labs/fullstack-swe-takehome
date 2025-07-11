@@ -12,25 +12,27 @@ type State<TData> =
   | { state: "done"; error: null; data: TData }
   | { state: "error"; error: Error; data: null };
 
-export type UseAsyncReducer<TResponse> = [
-  {
-    isLoading: boolean;
-    isDone: boolean;
-    isError: boolean;
-    error: Error | null;
-    data: TResponse | null;
-  },
+export type AsyncReducerState<TData> = {
+  isLoading: boolean;
+  isDone: boolean;
+  isError: boolean;
+  error: Error | null;
+  data: TData | null;
+};
+
+export type UseAsyncReducer<TData> = [
+  AsyncReducerState<TData>,
   {
     start: () => void;
-    done: (data: TResponse) => void;
+    done: (data: TData) => void;
     error: (error: Error) => void;
     reset: () => void;
   },
 ];
 
-export function useAsyncReducer<TResponse>(initialState?: State<TResponse>): UseAsyncReducer<TResponse> {
-  const [store, dispatch] = React.useReducer<React.Reducer<State<TResponse>, Action<TResponse>>>(
-    (s: State<TResponse>, action: Action<TResponse>) => {
+export function useAsyncReducer<TData>(initialState?: State<TData>): UseAsyncReducer<TData> {
+  const [store, dispatch] = React.useReducer<React.Reducer<State<TData>, Action<TData>>>(
+    (s: State<TData>, action: Action<TData>) => {
       switch (action.type) {
         case "start":
           return { state: "loading", error: null, data: null };
@@ -57,7 +59,7 @@ export function useAsyncReducer<TResponse>(initialState?: State<TResponse>): Use
     },
     {
       start: () => dispatch({ type: "start", payload: null }),
-      done: (data: TResponse) => dispatch({ type: "done", payload: data }),
+      done: (data: TData) => dispatch({ type: "done", payload: data }),
       reset: () => dispatch({ type: "reset", payload: null }),
       error: (error: Error) => dispatch({ type: "error", payload: error }),
     },

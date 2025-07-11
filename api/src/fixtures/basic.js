@@ -157,4 +157,14 @@ export default [
       // draft.reservation.id = 999999;
     },
   },
+  {
+    id: "auth token",
+    match: {
+      method: "POST",
+      route: "/user/token",
+    },
+    produce: (draft) => {
+      draft.createdAt = Date.now() - 10000;
+    },
+  },
 ];
