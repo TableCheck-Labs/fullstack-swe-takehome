@@ -21,7 +21,7 @@ const cache = new NodeCache();
 export const rateLimitMiddleware: RateLimitMiddleware =
   ({ buildCacheKey, onLimit }) =>
   async (req, res, next) => {
-    if (!client) {
+    if (!process.env.RATE_LIMIT || !client) {
       return next();
     }
 
