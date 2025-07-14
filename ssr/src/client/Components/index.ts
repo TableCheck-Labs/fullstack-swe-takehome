@@ -5,5 +5,6 @@ export { JoinWaitlist } from "./JoinWaitlist";
 export { Menu } from "./Menu";
 export { NavBar } from "./NavBar";
 export { Page } from "./Page";
+export { RateLimited } from "./RateLimited";
 export { Reserve } from "./Reserve";
 export { Title } from "./Title";

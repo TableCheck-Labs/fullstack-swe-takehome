@@ -1,104 +1,89 @@
-// import { Request } from "express";
-// import NodeCache from "node-cache";
+import { Request } from "express";
+import NodeCache from "node-cache";
 
-// import { SERVER_CONFIG } from "server/serverConfig";
-// import { client } from "services/redis";
-// import { captureException } from "services/sentry/server";
+import { Middleware } from "~/server/types";
+import { client } from "~/services/redis";
 
-// import { Middleware } from "../types";
+const periodInSeconds = 30;
+const maxRequestsPerPeriod = 2;
 
-// import { htmlResponseMiddleware } from "./htmlResponse";
-// import { renderMiddleware } from "./render";
+type BuildCacheKey = (unixPeriod: number, req: Request) => string;
 
-// const { periodInSeconds, maxRequestsPerPeriod } = SERVER_CONFIG.rateLimit;
+type Props = {
+  buildCacheKey: BuildCacheKey;
+  onLimit: Middleware<Promise<Middleware>>;
+};
 
-// type MiddlewareParams = Parameters<Middleware>;
+type RateLimitMiddleware = (props: Props) => Middleware;
 
-// interface RateLimitMiddleware {
-//   (
-//     buildCacheKey: BuildCacheKey,
-//     onLimit: (req: MiddlewareParams[0], res: MiddlewareParams[1]) => Promise<void> | void,
-//   ): Middleware;
-// }
+const cache = new NodeCache();
 
-// type BuildCacheKey = (unixPeriod: number, req: Request) => string;
+export const rateLimitMiddleware: RateLimitMiddleware =
+  ({ buildCacheKey, onLimit }) =>
+  async (req, res, next) => {
+    if (!client) {
+      return next();
+    }
 
-// function noop() {}
+    if (client.status !== "ready") {
+      return next();
+    }
 
-// const cache = new NodeCache();
+    const date = new Date();
+    const unixEpoch = date.getTime();
+    const unixEpochInSeconds = unixEpoch / 1000;
+    const unixPeriod = Math.round(unixEpochInSeconds / periodInSeconds);
+    const cacheKey = buildCacheKey(unixPeriod, req);
+    const isRateLimited = cache.has(cacheKey);
 
-// // eslint-disable-next-line consistent-return
-// export const rateLimitMiddleware: RateLimitMiddleware = (buildCacheKey, onLimit) => async (req, res, next) => {
-//   if (!client) {
-//     captureException(
-//       new Error("Redis client not instantiated but rate limiting is enabled, please double check env vars"),
-//     );
-//     return next();
-//   }
+    if (isRateLimited) {
+      const html = cache.get(cacheKey);
 
-//   if (client.status !== "ready") {
-//     return next();
-//   }
+      console.log(
+        JSON.stringify({
+          date: date.toISOString(),
+          method: req.method,
+          path: req.url,
+          status: res.statusCode,
+          length: res.get("Content-Length"),
+          request_id: res.locals.requestId,
+          ip: req.query.ip as string,
+          params: req.params,
+          duration: unixEpoch - res.locals.start,
+        }),
+      );
 
-//   const date = new Date();
-//   const unixEpoch = date.getTime();
-//   const unixEpochInSeconds = unixEpoch / 1000;
-//   const unixPeriod = Math.round(unixEpochInSeconds / periodInSeconds);
-//   const cacheKey = buildCacheKey(unixPeriod, req);
-//   const hasBusyPageCache = cache.has(cacheKey);
+      return res.send(html);
+    }
 
-//   if (hasBusyPageCache) {
-//     const html = cache.get(cacheKey);
+    try {
+      const expiresIn = Math.round(periodInSeconds - (unixEpochInSeconds % periodInSeconds) + 1);
+      const result = await client
+        .multi()
+        .sadd(cacheKey, req.query.ip as string)
+        .expire(cacheKey, expiresIn)
+        .scard(cacheKey)
+        .exec();
 
-//     // eslint-disable-next-line no-console
-//     console.log(
-//       JSON.stringify({
-//         date: date.toISOString(),
-//         method: req.method,
-//         path: req.url,
-//         status: res.statusCode,
-//         length: res.get("Content-Length"),
-//         request_id: res.locals.requestId,
-//         ip: req.clientIp,
-//         params: req.params,
-//         duration: unixEpoch - res.locals.start,
-//       }),
-//     );
+      // @ts-expect-error https://github.com/redis/ioredis/issues/1572
+      const redisErr = result[1];
 
-//     return res.send(html);
-//   }
+      if (redisErr instanceof Error) {
+        console.error(redisErr);
+        return next();
+      }
 
-//   try {
-//     const expiresIn = Math.round(periodInSeconds - (unixEpochInSeconds % periodInSeconds) + 1);
-//     const result = await client
-//       .multi()
-//       .sadd(cacheKey, req.clientIp as string)
-//       .expire(cacheKey, expiresIn)
-//       .scard(cacheKey)
-//       .exec();
+      // @ts-expect-error https://github.com/redis/ioredis/issues/1572
+      const count = result[2][1] as number;
 
-//     // @ts-expect-error not correctly typed https://github.com/redis/ioredis/issues/1572
-//     const redisErr = result[1];
+      if (count > maxRequestsPerPeriod) {
+        const onDone = await onLimit(req, res, next);
+        cache.set(cacheKey, res.locals.html, expiresIn);
+        return onDone(req, res, next);
+      }
+    } catch (e) {
+      console.error(e);
+    }
 
-//     if (redisErr instanceof Error) {
-//       console.error(redisErr);
-//       captureException(redisErr, "Redis operation failed in rate limit middleware");
-//       return next();
-//     }
-
-//     // @ts-expect-error not correctly typed
-//     const count = result[2][1] as number;
-
-//     if (count > maxRequestsPerPeriod) {
-//       await onLimit(req, res);
-//       renderMiddleware(req, res, noop);
-//       cache.set(cacheKey, res.locals.html, expiresIn);
-//       return htmlResponseMiddleware(req, res, noop);
-//     }
-//   } catch (e) {
-//     console.error(e);
-//     captureException(e, "Unexpected error during rate limit processing");
-//   }
-
-//   return next();
-// };
+    next();
+  };

@@ -9,7 +9,7 @@ export const serverInstance = axios.create({
 });
 
 function logInterceptor(req: InternalAxiosRequestConfig) {
-  console.log(`[SSR REQUEST] ${req.method?.toUpperCase()} ${req.baseURL}${req.url} ${req.data}`);
+  console.log(`[SSR REQUEST: ${process.pid}] ${req.method?.toUpperCase()} ${req.baseURL}${req.url} ${req.data || ""}`);
 
   return req;
 }

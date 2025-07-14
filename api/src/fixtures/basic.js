@@ -167,4 +167,14 @@ export default [
       draft.createdAt = Date.now() - 10000;
     },
   },
+  {
+    id: "user",
+    match: {
+      method: "GET",
+      route: "/booking/user",
+    },
+    produce: (draft) => {
+      draft.email = "steve.woz@apple.com";
+    },
+  },
 ];

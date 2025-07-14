@@ -4,6 +4,7 @@ export { getShop } from "./getShop";
 export { getUser } from "./getUser";
 export { init } from "./init";
 export { produceHydratedState } from "./produceHydratedState";
+export { rateLimitMiddleware } from "./ratelimiter";
 export { respond200 } from "./respond200";
 export { setCanonicalPage } from "./setCanonicalPage";
 export { setShopNameViaParams, setShopNameViaReservation } from "./setShopName";

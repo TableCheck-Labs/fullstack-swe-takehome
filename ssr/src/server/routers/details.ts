@@ -6,6 +6,20 @@ export const { router: detailsRouter } = new Router(
   ["/:locale/booking/:code", "/booking/:code"],
   [
     M.init,
+    M.rateLimitMiddleware({
+      buildCacheKey: unixPeriod => `details:${unixPeriod}`,
+      onLimit: async (req, res, next) => {
+        M.setShopNameViaReservation(req, res, next);
+        M.getShop(req, res, next);
+        M.produceHydratedState(draft => {
+          draft.shop = res.locals.data.shop;
+        })(req, res, next);
+        res.locals.html = await res.locals.render(res.locals.renderers.detailsPageRenderer);
+        return () => {
+          M.respond200(req, res, next);
+        };
+      },
+    }),
     M.getUser,
     M.setCanonicalPage("details"),
     M.getReservation,
