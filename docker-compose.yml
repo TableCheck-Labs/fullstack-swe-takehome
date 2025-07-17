@@ -1,5 +1,7 @@
 version: "3.9"
 
+# cd ssr
+# npm run dev:ssr
 services:
   ssr:
     build:
@@ -12,6 +14,8 @@ services:
     environment:
       - NODE_ENV=production
 
+  # cd api
+  # npm start
   api:
     image: node:19-alpine
     ports:
@@ -21,6 +25,7 @@ services:
     working_dir: /app
     command: npm run start
 
+  # will be skipped if RATE_LIMIT is not set in ssr service
   redis:
     image: redis:7
     ports:
