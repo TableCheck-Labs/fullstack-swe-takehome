@@ -20,9 +20,7 @@
     "lodash": "4.17.21",
     "openapi-mock-express-middleware": "4.2.0",
     "path-to-regexp": "8.2.0",
-    "query-string": "9.2.2"
-  },
-  "devDependencies": {
+    "query-string": "9.2.2",
     "tsx": "4.20.3"
   }
 }
