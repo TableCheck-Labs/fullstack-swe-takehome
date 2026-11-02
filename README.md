@@ -33,9 +33,8 @@ You must use one of these frameworks/libs/implementations:
 You must use one of:
 
 1. Ruby on Rails
-2. nodejs (any framework)
+2. nodejs (any framework besides next/nest)
 3. golang (any framework)
-   Next, Nest are not allowed.
 
 ### Testing
 
