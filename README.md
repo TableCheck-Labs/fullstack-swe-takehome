@@ -26,7 +26,7 @@ SPAs are not allowed.
 You must use one of these frameworks/libs/implementations:
 
 - Pure vanilla js with _no_ dependencies.
-- React
+- React v18+
 
 ### Backend
 
