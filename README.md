@@ -25,28 +25,25 @@ SPAs are not allowed.
 
 You must use one of these frameworks/libs/implementations:
 
-- Pure vanilla js with *no* dependencies.
+- Pure vanilla js with _no_ dependencies.
 - React
-- HTMX
 
 ### Backend
 
 You must use one of:
 
 1. Ruby on Rails
-2. Node/Deno/Bun with your choice of backend lib/framework (i.e., express, hono, etc)
+2. nodejs (any framework)
+3. golang (any framework)
+   Next, Nest are not allowed.
 
-Next, Nest are not allowed.
+### Testing
+
+End-to-end tests must be written with Playwright.
 
 ### Database
 
-You must use one of
-
-1. Mongo
-2. Postgres
-3. Mysql
-4. Redis
-
+You must use one either mongo db
 
 ## Business Requirements
 
@@ -60,11 +57,13 @@ Hardcoded to 3 seconds per person. Example: A party of 4 takes 12 seconds to com
 
 **Joining the waitlist**
 
-The diner opens the app that shows a single form with these form elements:
+The diner opens the app that shows a single form with these fields:
 
-1. Name input (text)
-2. Party size input (number)
-3. Submit button. When clicked, the party is added to the waitlist queue.
+- Name
+- Email
+- Party size
+
+Submitting the form should send the api request to join the waitlist.
 
 **Checking in and starting the service**
 
@@ -84,6 +83,18 @@ When a party completes service:
 - If the seats available are enough for the next party size, the next party’s app shows a new “Check-in” button.
 - If not, wait until enough seats are available.
 
+**Duplicate joins**
+
+A party must never appear on the waitlist twice.
+
+**Concurrency**
+
+If two parties try to join the waitlist at the same time the venue must not become overbooked, provide each party with the best possible experience.
+
+## Spec clarification
+
+No further questions will be answered about the spec. Use your best judgement, business acumen and product skills to craft the best user experience possible.
+
 ## Submission Guidelines
 
 1. Create a public GitHub repository for your project.
@@ -92,7 +103,7 @@ When a party completes service:
 
 Please grant access to your repo for these following github users
 
-- `daniellizik` - Daniel Lizik, Engineering Manager
+- `daniellizik`
 
 ## Evaluation Criteria
 
