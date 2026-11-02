@@ -43,7 +43,7 @@ End-to-end tests must be written with Playwright.
 
 ### Database
 
-You must use one either mongo db
+You must use mongo db.
 
 ## Business Requirements
 
