@@ -90,9 +90,9 @@ A party must never appear on the waitlist twice.
 
 If two parties try to join the waitlist at the same time the venue must not become overbooked, provide each party with the best possible experience.
 
-## Spec clarification
+## Clarification
 
-No further questions will be answered about the spec. Use your best judgement, business acumen and product skills to craft the best user experience possible.
+No further questions will be answered about the spec or takehome. Use your best engineerig skills, judgement, business acumen and product skills to craft the best user experience possible.
 
 ## Submission Guidelines
 
